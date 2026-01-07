@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortner</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</head>
+
+<body class="bg-gray-300 min-h-screen flex justify-center items-center ">
+    <div class="bg-white flex flex-col w-90 shadow">
+        <div class="flex justify-center text-2xl m-2  font-serif">
+            <h1>URL Shortner</h1>
+        </div>
+        <div>
+            <form  class="flex flex-col m-5 " id="form">
+                <label for="url" class="font-bold  m-1">Enter URL</label>
+                <input type="url" name="url" class="border p-2" placeholder="enter url" id="url" required>
+                <label for="short" class="font-bold  m-1">Custom Short URL (Optional)</label>
+                <input type="text" name="custom" class="border p-2" placeholder="enter custom url" id="short">
+                <button type="submit" class="bg-blue-500 mt-5 p-2 font-bold text-white hover:bg-blue-600">Short</button>
+            </form>
+            <div class="flex justify-center m-4 p-2 font-serif font-light text-2xl">
+                Shortened URL
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("form").addEventListener("submit", (e) => {
+            e.preventDefault()
+            const formData = new FormData(e.target)
+            const url = formData.get("url");
+            const custom = formData.get("custom")
+            console.log(url, custom)
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+# This files are Very large folder and sensitive , So we add this files in this folder
+# this files Can be recreated using npm install
+
+# Node modules 
+
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+
+# Build output
+dist/
+build/
+
+# IDE / Editor
+.vscode/
+.idea/
