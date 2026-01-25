@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import passport from 'passport'
 import localStrategy from 'passport-local'
+import jwt from 'jsonwebtoken'
 dotenv.config();
 
 //! Step -1 Create Instance
@@ -67,7 +68,19 @@ passport.use(
         } catch (error) {
             done(error)
         } 
+
+        //! Genreating JWT
+        const token = jwt.sign(
+            {id: isUser._id},
+            process.env.JWT_KEY,
+            {expiresIn:'1h'}
+            
+        )
+        console.log(token)
+
 })) 
+        
+
 
 //? CURD Opreation
 const handelAddData = async (name, username, password) => {
