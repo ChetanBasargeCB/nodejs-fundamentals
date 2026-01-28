@@ -34,25 +34,30 @@ const generate = async (topic) => {
     }
   ]
   Return only the JSON array without any markdown formatting or code blocks.`;
-
+ 
     console.log("Asking Gemini...");
-
+ 
     // new  updated function of gemini thath is //! models.generateContent
     const result = await genAI.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
     });  
-    console.log(result.text)
-    return result.text
+    const data = result.text 
+
+    console.log(data,"api data")
+
+    if(!data) return res.status(429).json({message:"API Tokend Ended "})
+    return data
   } catch (error) {
     console.error("Error generating content:", error);
+   
   }
-};   
-  
+};    
+    
 app.post("/AI",async(req,res)=>{
     try {
     const data = req.body.data.question  
-    console.log("data",data)
+    console.log("Topic",data)
     const result = await generate(data);
     res.send(result)
     } catch (error) {
