@@ -3,7 +3,7 @@ import dotenv from "dotenv/config";
 import { ConnectDB } from "./Config/db.js";
 import router from "./Routes/userRoutes.js";
 import cookieParser from "cookie-parser";
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import User from "./Model/UserModel.js";
 
 const app = express();
@@ -21,24 +21,50 @@ app.get("/", (req, res) => {
 
 app.use("/user", router);
 
-//! Verify and geting access token 
-app.post("/token",  (req, res) => {
+//! Protected Middelware
+const VerifyController = async (req, res, next) => {
+  const authHeader =  req.headers.authorization;
+  console.log(authHeader);
+  if (!authHeader) {
+    return res.status(401).json({ message: "token not founded" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  console.log("this token",token);
+
+  jwt.verify(token, process.env.ACCESS_KEY, (err, user) => {
+    if (err) {
+      return res.status(400).json({ message: "Invaild token" });
+    }
+    next(); 
+  });
+};
+
+// Protected Routes
+app.get("/profile", VerifyController, (req, res) => {
+  res.json({ message: "Safe data" });
+});
+
+
+//! Verify and geting access token
+
+app.post("/token", (req, res) => {
   const refereshtoken = req.cookies.refreshToken;
-  console.log("This is key",refereshtoken);
+  console.log("This is key", refereshtoken);
   if (!refereshtoken)
     return res.status(401).json({ message: "No Refresh token found" });
- 
+
   // verify refresh token
-  jwt.verify(refereshtoken, process.env.REFRESH_KEY,  (err, user) => {
+  jwt.verify(refereshtoken, process.env.REFRESH_KEY, (err, user) => {
     if (err) return res.status(403).json({ message: "Invalid token" });
 
-    let newAccesstoken =  jwt.sign({ id: User._id }, process.env.ACCESS_KEY, {
-      expiresIn: "15min",
+    let newAccesstoken = jwt.sign({ id: User._id }, process.env.ACCESS_KEY, {
+      expiresIn: "15m",
     });
-  res.status(200).json({message:"New access token genrated",newAccesstoken})
-
+    res
+      .status(200)
+      .json({ message: "New access token genrated", newAccesstoken });
   });
-
 });
 
 app.listen(PORT, () => console.log(`Server Running at ${PORT}`));
