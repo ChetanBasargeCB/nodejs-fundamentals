@@ -58,14 +58,15 @@ export const loginController = async (req,res)=>{
 
      })
 
-    return res.status(200).json({message:"Login Success",accessToken} 
+    return res.status(200).json({message:"Login Successfull!",accessToken} 
         
     )
 
    } catch (error) {
     console.log("login error",error)
-    res.status(500).json({message:"Server error"})
+    return res.status(500).json({message:"Server error"})
    }
     
 }
+
 

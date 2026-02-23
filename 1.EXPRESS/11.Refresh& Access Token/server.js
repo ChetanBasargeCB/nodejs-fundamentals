@@ -5,6 +5,7 @@ import router from "./Routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 import jwt, { decode } from "jsonwebtoken";
 import User from "./Model/UserModel.js";
+import { authMiddelware } from "./MIddleware/authmiddlleware.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,7 +20,7 @@ app.get("/", (req, res) => {
   res.send("Refresh Token");
 });
 
-app.use("/user", router);
+app.use("/user", authMiddelware, router);
 
 //! Protected Middelware
 const VerifyController = async (req, res, next) => {
@@ -66,5 +67,13 @@ app.post("/token", (req, res) => {
       .json({ message: "New access token genrated", newAccesstoken });
   });
 });
+
+
+//! Clear Refresh toekn when User log outs
+
+app.post('/logout',(req,res)=>{
+  res.clearCookie('refreshToken')
+  res.send("log outedd")
+})
 
 app.listen(PORT, () => console.log(`Server Running at ${PORT}`));

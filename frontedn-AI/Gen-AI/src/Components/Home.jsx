@@ -8,41 +8,36 @@ export default function Home() {
   const [currIndex, setCurrIndex] = useState(0);
   const [selected, setSelected] = useState(false);
   const [answered, setAnswered] = useState(null);
-  const [token,setToken]=useState(0)
+  const [token, setToken] = useState(0);
 
   const handelInput = (e) => {
     setData({ question: e.target.value });
   };
- 
-  
+
   const handelsubmit = async (e) => {
     e.preventDefault();
     if (!data.question) return;
-    if (token >= 3)  return; 
-  
+    if (token >= 3) return;
 
     setLoading(true);
     try {
       const resp = await axios.post("http://localhost:4000/AI", { data });
       setOutput(resp.data);
       setCurrIndex(0);
-      setSelected(false); // Reset selection on new search
-      // Increment token ONLY after a successful request
-     setToken(pre=>pre+1)
-    setLoading(false);
-     console.log(resp)
-    if(token===2){
-       alert("You exceeded your current quota, please check your plan and billing details");
-    }
-    if(resp.data==""){
-      alert("You exceeded your current quota try after some time~")
-    }
+      setSelected(false);
+      setToken((pre) => pre + 1);
+      setLoading(false);
+
+      if (token === 2) {
+        alert("You exceeded your current quota, please check your plan and billing details");
+      }
+      if (resp.data == "") {
+        alert("You exceeded your current quota try after some time~");
+      }
     } catch (error) {
       console.log(error);
     }
- 
   };
-
 
   const handelNextbtn = () => {
     setCurrIndex((prev) => prev + 1);
@@ -61,24 +56,27 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-200 flex flex-col items-center justify-start pt-16">
+    <div className="min-h-screen bg-gray-200 flex flex-col items-center justify-start pt-16 px-4">
       {/* Search Bar */}
       <form
         onSubmit={handelsubmit}
-        className="flex w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden"
+        className="flex flex-col sm:flex-row w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden"
       >
         <input
           type="text"
           value={data.question}
           onChange={handelInput}
           placeholder="Search topic..."
-          className="flex-1 px-5 py-3 outline-none text-gray-700"
+          className="flex-1 px-4 py-3 sm:px-5 text-sm sm:text-base outline-none text-gray-700"
         />
         <button
-        disabled={token===2}
+          disabled={token === 2}
           type="submit"
-          className={` ${token===1?"bg-gray-500 cursor-not-allowed transition px-6 " :"bg-blue-600 text-white px-6 hover:bg-blue-700 transition"}`}
-          
+          className={`w-full sm:w-auto ${
+            token === 1
+              ? "bg-gray-500 cursor-not-allowed transition px-6 py-3 text-sm sm:text-base"
+              : "bg-blue-600 text-white px-6 py-3 hover:bg-blue-700 transition text-sm sm:text-base"
+          }`}
         >
           {loading ? "..." : "Go"}
         </button>
@@ -89,10 +87,13 @@ export default function Home() {
         <div className="mt-10 w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       )}
 
-      {/* Cards - Added check for output existence */}
+      {/* Cards */}
       {!loading && output[currIndex] && (
-        <div className="mt-10 w-full max-w-md">
-          <h2 className="mb-4 text-xl font-semibold text-center">{output[currIndex].question}</h2>
+        <div className="mt-10 w-full max-w-md px-1 sm:px-0">
+          <h2 className="mb-4 text-lg sm:text-xl font-semibold text-center">
+            {output[currIndex].question}
+          </h2>
+
           <ol className="space-y-3">
             {output[currIndex].options.map((option, optionIndex) => {
               const correctIndex = output[currIndex].correctAnswer;
@@ -109,7 +110,7 @@ export default function Home() {
                 <li
                   key={optionIndex}
                   onClick={() => handelSelect(optionIndex)}
-                  className={`border rounded-lg py-3 px-4 cursor-pointer transition shadow-sm ${bg}`}
+                  className={`border rounded-lg py-2 sm:py-3 px-3 sm:px-4 cursor-pointer transition shadow-sm ${bg}`}
                 >
                   {option}
                 </li>
@@ -118,12 +119,14 @@ export default function Home() {
           </ol>
 
           {/* Buttons next,prev */}
-          <div className="flex justify-between mt-6">
+          <div className="flex gap-4 justify-between mt-6">
             <button
               onClick={handelPrevbtn}
               disabled={currIndex === 0}
-              className={`px-4 py-2 rounded-lg text-white transition ${
-                currIndex === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+              className={`flex-1 px-4 py-2 rounded-lg text-white transition ${
+                currIndex === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
               }`}
             >
               Prev
@@ -132,8 +135,10 @@ export default function Home() {
             <button
               onClick={handelNextbtn}
               disabled={currIndex === output.length - 1}
-              className={`px-4 py-2 rounded-lg text-white transition ${
-                currIndex === output.length - 1 ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+              className={`flex-1 px-4 py-2 rounded-lg text-white transition ${
+                currIndex === output.length - 1
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
               }`}
             >
               Next

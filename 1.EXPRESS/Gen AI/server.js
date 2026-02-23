@@ -15,13 +15,12 @@ app.get("/", (req, res) => {
 
 console.log("API Key loaded:", process.env.API_KEY ? "Yes" : "No");
 
-// provide API Here
+// provide API Here 
 const genAI = new GoogleGenAI({
   apiKey: process.env.API_KEY,
 });
 
 // propmt to AI
-
 const generate = async (topic) => {
   try {
     const prompt = `Generate a quiz about ${topic} at a Basic difficulty. 
@@ -37,7 +36,8 @@ const generate = async (topic) => {
  
     console.log("Asking Gemini...");
  
-    // new  updated function of gemini thath is //! models.generateContent
+    // new  updated function of gemini that  is //! models.generateContent
+
     const result = await genAI.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
@@ -46,7 +46,7 @@ const generate = async (topic) => {
 
     console.log(data,"api data")
 
-    if(!data) return res.status(429).json({message:"API Tokend Ended "})
+    if(!data) return res.status(403).json({message:"API Tokend Ended "})
     return data
   } catch (error) {
     console.error("Error generating content:", error);
